@@ -1,0 +1,17 @@
+---
+repos:
+  - repo: local
+    hooks:
+      - id: hadolint
+        name: Hadolint
+        description: Haskell-based Docker image linter
+        language: docker_image
+        types:
+          - dockerfile
+        entry: --entrypoint /bin/hadolint hadolint/hadolint:latest --config ./.hadolint.yaml -
+  - repo: https://github.com/adrienverge/yamllint
+    rev: v1.25.0
+    hooks:
+      - id: yamllint
+        name: Run yamllint
+        description: Lint yaml files

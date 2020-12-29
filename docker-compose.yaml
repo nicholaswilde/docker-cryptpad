@@ -1,0 +1,23 @@
+---
+version: "2.1"
+services:
+  installer:
+    image: nicholaswilde/cryptpad:3.25.0-ls1
+    container_name: cryptpad
+    ports:
+      - 3000:3000
+    restart: unless-stopped
+    volumes:
+      - blob:/blob
+      - block:/block
+      - customize:/customize
+      - config:/config
+      - data:/data
+      - datastore:/datastore
+volumes:
+  blob:
+  block:
+  customize:
+  config:
+  data:
+  datastore:
