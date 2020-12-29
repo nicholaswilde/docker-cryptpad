@@ -21,7 +21,7 @@ services:
     image: nicholaswilde/cryptpad
     container_name: cryptpad
     environment:
-      - TZ=username #optional
+      - TZ=America/Los_Angeles #optional
       - PUID=1000   #optional
       - PGID=1000   #optional
     ports:
@@ -32,9 +32,9 @@ services:
 ```bash
 $ docker run -d \
   --name=cryptpad \
-  -e TZ=username `# optional` \
-  -e PUID=token  `# optional` \
-  -e PGID=port   `# optional` \
+  -e TZ=	America/Los_Angeles `# optional` \
+  -e PUID=1000  `# optional` \
+  -e PGID=1000   `# optional` \
   -p 3000:3000 \
   --restart unless-stopped \
   nicholaswilde/cryptpad
