@@ -1,4 +1,12 @@
 ---
+# The following secrets are required to push the images.
+# DOCKERHUB_USERNAME
+# DOCKERHUB_TOKEN
+# CR_PAT
+# QUAY_USERNAME
+# QUAY_TOKEN
+# The quay repository needs to be create first using the web interface and the
+# robot needs to be given write access to it before pushing to it.
 name: ci
 
 # Controls when the action will run. Workflow runs when manually triggered using the UI
@@ -11,7 +19,7 @@ on:
         # Friendly description to be shown in the UI instead of 'name'
         description: 'Version'
         # Default value if no value is explicitly provided
-        default: '3.25.0-ls1'
+        default: '3.25.0-ls2'
         # Input has to be provided for the workflow to run
         required: true
 

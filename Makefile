@@ -46,6 +46,19 @@ push-latest: Dockerfile
 push-all: Dockerfile
 	docker buildx build -t $(NS)/$(IMAGE_NAME):$(VERSION)-ls$(LS) $(PLATFORMS) --build-arg VERSION=$(VERSION) -f Dockerfile --push .
 
+
+push-quay: Dockerfile
+	docker buildx build -t quay.io/$(NS)/$(IMAGE_NAME):$(VERSION)-ls$(LS) $(PLATFORMS) --build-arg VERSION=$(VERSION) -f Dockerfile --push .
+
+push-quay-latest: Dockerfile
+	docker buildx build -t quay.io/$(NS)/$(IMAGE_NAME):latest $(PLATFORMS) --build-arg VERSION=$(VERSION) -f Dockerfile --push .
+
+push-github: Dockerfile
+	docker buildx build -t ghcr.io/$(NS)/$(IMAGE_NAME):$(VERSION)-ls$(LS) $(PLATFORMS) --build-arg VERSION=$(VERSION) -f Dockerfile --push .
+
+push-github-latest: Dockerfile
+  docker buildx build -t ghcr.io/$(NS)/$(IMAGE_NAME):latest $(PLATFORMS) --build-arg VERSION=$(VERSION) -f Dockerfile --push .
+
 ## rm   		: Remove the container
 rm: stop
 	docker rm $(CONTAINER_NAME)-$(CONTAINER_INSTANCE)
