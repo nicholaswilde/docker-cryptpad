@@ -46,18 +46,45 @@ push-latest: Dockerfile
 push-all: Dockerfile
 	docker buildx build -t $(NS)/$(IMAGE_NAME):$(VERSION)-ls$(LS) $(PLATFORMS) --build-arg VERSION=$(VERSION) -f Dockerfile --push .
 
+## push-arm     : Push all release platform images
+push-arm: Dockerfile
+	docker buildx build -t $(NS)/$(IMAGE_NAME):arm-$(VERSION)-ls$(LS) --build-arg VERSION=$(VERSION) -f Dockerfile --push .
 
+## push-arm-latest     : Push all release platform images
+push-arm-latest: Dockerfile
+	docker buildx build -t $(NS)/$(IMAGE_NAME):arm-latest --build-arg VERSION=$(VERSION) -f Dockerfile --push .
+
+## push-quay-arm     : Push all release platform images
+push-quay-arm: Dockerfile
+	docker buildx build -t quay.io/$(NS)/$(IMAGE_NAME):arm-$(VERSION)-ls$(LS) --build-arg VERSION=$(VERSION) -f Dockerfile --push .
+
+## push-quay-latest-arm     : Push all release platform images
+push-quay-latest-arm: Dockerfile
+	docker buildx build -t quay.io/$(NS)/$(IMAGE_NAME):arm-latest --build-arg VERSION=$(VERSION) -f Dockerfile --push .
+
+## push-quay	:
 push-quay: Dockerfile
 	docker buildx build -t quay.io/$(NS)/$(IMAGE_NAME):$(VERSION)-ls$(LS) $(PLATFORMS) --build-arg VERSION=$(VERSION) -f Dockerfile --push .
 
+## push-quay-latest	: 
 push-quay-latest: Dockerfile
 	docker buildx build -t quay.io/$(NS)/$(IMAGE_NAME):latest $(PLATFORMS) --build-arg VERSION=$(VERSION) -f Dockerfile --push .
 
+## push-github	: 
 push-github: Dockerfile
 	docker buildx build -t ghcr.io/$(NS)/$(IMAGE_NAME):$(VERSION)-ls$(LS) $(PLATFORMS) --build-arg VERSION=$(VERSION) -f Dockerfile --push .
 
+## push-github-latest	:
 push-github-latest: Dockerfile
-  docker buildx build -t ghcr.io/$(NS)/$(IMAGE_NAME):latest $(PLATFORMS) --build-arg VERSION=$(VERSION) -f Dockerfile --push .
+	docker buildx build -t ghcr.io/$(NS)/$(IMAGE_NAME):latest $(PLATFORMS) --build-arg VERSION=$(VERSION) -f Dockerfile --push .
+
+## push-quay-arm     : Push all release platform images
+push-github-arm: Dockerfile
+	docker buildx build -t ghcr.io/$(NS)/$(IMAGE_NAME):arm-$(VERSION)-ls$(LS) --build-arg VERSION=$(VERSION) -f Dockerfile --push .
+
+## push-quay-latest-arm     : Push all release platform images
+push-github-latest-arm: Dockerfile
+	docker buildx build -t ghcr.io/$(NS)/$(IMAGE_NAME):arm-latest --build-arg VERSION=$(VERSION) -f Dockerfile --push .
 
 ## rm   		: Remove the container
 rm: stop
