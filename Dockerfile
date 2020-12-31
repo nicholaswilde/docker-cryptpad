@@ -1,4 +1,4 @@
-FROM --platform=$BUILDPLATFORM alpine:3.12.1 as base
+FROM alpine:3.12.1 as base
 ARG TARGETARCH
 ARG BUILDPLATFORM
 ARG VERSION=3.25.0
@@ -17,7 +17,7 @@ RUN \
   bower install --allow-root
 COPY entrypoint.sh /app/entrypoint.sh
 
-FROM --platform=$BUILDPLATFORM alpine:3.12.1
+FROM alpine:3.12.1
 ARG TARGETARCH
 ARG BUILDPLATFORM
 ARG PUID=1000

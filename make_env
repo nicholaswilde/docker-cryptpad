@@ -1,5 +1,5 @@
 VERSION = 3.25.0
-LS=2
+LS=3
 NS = nicholaswilde
 
 ENV=-e TZ=America/Los_Angeles
@@ -8,5 +8,5 @@ ENV=-e TZ=America/Los_Angeles
 PORTS = -p 3000:3000
 
 # Build
-PLATFORMS = --platform linux/arm/v7,linux/arm/v6
+PLATFORMS = --platform linux/arm/v7,linux/arm/v6,linux/arm64,linux/amd64
 PLATFORMS_ARM = --platform linux/arm64,linux/arm/v7
