@@ -2,7 +2,7 @@
 version: "2.1"
 services:
   installer:
-    image: nicholaswilde/cryptpad:3.25.0-ls2
+    image: nicholaswilde/cryptpad:latest
     container_name: cryptpad
     ports:
       - 3000:3000
