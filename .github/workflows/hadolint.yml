@@ -18,7 +18,7 @@ jobs:
  
       - name: Hadolint Action
         # You may pin to the exact commit or the version.
-        uses: brpaz/hadolint-action@v1.1.0
+        uses: brpaz/hadolint-action@v1.3.1
         with:
           # The path to the Dockerfile to lint
           dockerfile: Dockerfile # optional, default is Dockerfile
