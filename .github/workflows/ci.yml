@@ -19,7 +19,7 @@ on:
         # Friendly description to be shown in the UI instead of 'name'
         description: 'Version'
         # Default value if no value is explicitly provided
-        default: '3.25.1-ls4'
+        default: '4.0.0-ls5'
         # Input has to be provided for the workflow to run
         required: true
 
