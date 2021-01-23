@@ -1,30 +1,24 @@
-include make_env
+include make.env
 
-NS ?= nicholaswilde
-VERSION ?= 1.8.7
-LS ?= 01
-
-IMAGE_NAME ?= cryptpad
-CONTAINER_NAME ?= cryptpad
-CONTAINER_INSTANCE ?= default
+BUILD_DATE ?= $(shell date -u +%Y-%m-%dT%H%M%SZ)
 
 .PHONY: push push-latest run rm help vars test
 
 ## all		: Build all platforms
 all: Dockerfile
-	docker buildx build -t $(NS)/$(IMAGE_NAME):$(VERSION)-ls$(LS) $(PLATFORMS) --build-arg VERSION=$(VERSION) -f Dockerfile .
+	docker buildx build -t $(NS)/$(IMAGE_NAME):$(VERSION)-ls$(LS) $(PLATFORMS) --build-arg VERSION=$(VERSION) --build-arg BUILD_DATE=$(BUILD_DATE) -f Dockerfile .
 
 ## build		: build the current platform (default)
 build: Dockerfile
-	docker buildx build -t $(NS)/$(IMAGE_NAME):$(VERSION)-ls$(LS) --build-arg VERSION=$(VERSION) -f Dockerfile .
+	docker buildx build -t $(NS)/$(IMAGE_NAME):$(VERSION)-ls$(LS) --build-arg VERSION=$(VERSION) --build-arg BUILD_DATE=$(BUILD_DATE) -f Dockerfile .
 
 ## test		: test build the current platform
 test: Dockerfile
-	docker buildx build -t $(NS)/$(IMAGE_NAME):$(VERSION)-ls$(LS) --build-arg VERSION=$(VERSION) -f Dockerfile . --progress=plain --no-cache
+	docker buildx build -t $(NS)/$(IMAGE_NAME):$(VERSION)-ls$(LS) --build-arg VERSION=$(VERSION) --build-arg BUILD_DATE=$(BUILD_DATE) -f Dockerfile . --progress=plain --no-cache
 
 ## build-latest	: Build the latest current platform
 build-latest: Dockerfile
-	docker buildx build -t $(NS)/$(IMAGE_NAME):latest --build-arg VERSION=$(VERSION) -f Dockerfile .
+	docker buildx build -t $(NS)/$(IMAGE_NAME):latest --build-arg VERSION=$(VERSION) --build-arg BUILD_DATE=$(BUILD_DATE) -f Dockerfile .
 
 ## load   	: Load the release image
 load: Dockerfile
@@ -36,15 +30,15 @@ load-latest: Dockerfile
 
 ## push   	: Push the release image
 push: Dockerfile
-	docker buildx build -t $(NS)/$(IMAGE_NAME):$(VERSION)-ls$(LS) --build-arg VERSION=$(VERSION) -f Dockerfile --push .
+	docker buildx build -t $(NS)/$(IMAGE_NAME):$(VERSION)-ls$(LS) --build-arg VERSION=$(VERSION) --build-arg BUILD_DATE=$(BUILD_DATE) -f Dockerfile --push .
 
 ## push-latest  	: PUsh the latest image
 push-latest: Dockerfile
-	docker buildx build -t $(NS)/$(IMAGE_NAME):latest $(PLATFORMS) --build-arg VERSION=$(VERSION) -f Dockerfile --push .
+	docker buildx build -t $(NS)/$(IMAGE_NAME):latest $(PLATFORMS) --build-arg VERSION=$(VERSION) --build-arg BUILD_DATE=$(BUILD_DATE) -f Dockerfile --push .
 
 ## push-all 	: Push all release platform images
 push-all: Dockerfile
-	docker buildx build -t $(NS)/$(IMAGE_NAME):$(VERSION)-ls$(LS) $(PLATFORMS) --build-arg VERSION=$(VERSION) -f Dockerfile --push .
+	docker buildx build -t $(NS)/$(IMAGE_NAME):$(VERSION)-ls$(LS) $(PLATFORMS) --build-arg VERSION=$(VERSION) --build-arg BUILD_DATE=$(BUILD_DATE) -f Dockerfile --push .
 
 ## rm   		: Remove the container
 rm: stop
