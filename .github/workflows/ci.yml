@@ -19,14 +19,27 @@ on:
         # Friendly description to be shown in the UI instead of 'name'
         description: 'Version'
         # Default value if no value is explicitly provided
-        default: '4.0.0-ls5'
+        default: '4.1.0'
         # Input has to be provided for the workflow to run
+        required: true
+      ls:
+        description: 'ls'
+        default: 'ls6'
         required: true
 
 jobs:
   main:
     runs-on: ubuntu-latest
     steps:
+      -
+        name: Get tag
+        run: echo "tag=${{ github.event.inputs.version }}-${{ github.event.inputs.ls }}" >> $GITHUB_ENV
+      -
+        name: Remove docker from the repo name
+        run: echo "repo_name=$(echo "${{ github.event.repository.name }}" | sed 's/[^-]*-//')" >> $GITHUB_ENV
+      -
+        name: Get current date
+        run: echo "date=$(date -u +%Y-%m-%dT%H%M%SZ)" >> $GITHUB_ENV
       -
         name: Checkout
         uses: actions/checkout@v2
@@ -75,11 +88,24 @@ jobs:
           platforms: linux/amd64,linux/arm/v7,linux/arm64
           push: true
           build-args: |
-            VERSION=3.25.0
+            BUILD_DATE=${{ env.date }}
+            VERSION=${{ github.event.inputs.version }}
           tags: |
-            nicholaswilde/cryptpad:latest
-            nicholaswilde/cryptpad:${{ github.event.inputs.version }}
-            ghcr.io/nicholaswilde/cryptpad:latest
-            ghcr.io/nicholaswilde/cryptpad:${{ github.event.inputs.version }}
-            quay.io/nicholaswilde/cryptpad:latest
-            quay.io/nicholaswilde/cryptpad:${{ github.event.inputs.version }}
+            ${{ github.repository_owner }}/${{ env.repo_name }}:latest
+            ${{ github.repository_owner }}/${{ env.repo_name }}:${{ env.tag }}
+            ghcr.io/${{ github.repository_owner }}/${{ env.repo_name }}:latest
+            ghcr.io/${{ github.repository_owner }}/${{ env.repo_name }}:${{ env.tag }}
+            quay.io/${{ github.repository_owner }}/${{ env.repo_name }}:latest
+            quay.io/${{ github.repository_owner }}/${{ env.repo_name }}:${{ env.tag }}
+      -
+        name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        with:
+          tag_name: ${{ env.tag }}
+          release_name: ${{ env.tag }}
+          draft: false
+          prerelease: false
+
