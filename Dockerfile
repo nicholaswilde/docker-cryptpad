@@ -7,7 +7,7 @@ RUN \
   echo "**** install packages ****" && \
   apk add --no-cache \
     wget=1.21.1-r1 \
-    git \
+    git=2.30.1-r0 \
     npm=14.15.4-r0 && \
   wget -q -O "${VERSION}.tar.gz" "https://github.com/xwiki-labs/cryptpad/archive/${VERSION}.tar.gz" && \
   echo "${CHECKSUM}  ${VERSION}.tar.gz" | sha256sum -c && \
