@@ -2,8 +2,7 @@
 [![Docker Image Version (latest by date)](https://img.shields.io/docker/v/nicholaswilde/cryptpad)](https://hub.docker.com/r/nicholaswilde/cryptpad)
 [![Docker Pulls](https://img.shields.io/docker/pulls/nicholaswilde/cryptpad)](https://hub.docker.com/r/nicholaswilde/cryptpad)
 [![GitHub](https://img.shields.io/github/license/nicholaswilde/docker-cryptpad)](./LICENSE)
-[![hadolint](https://github.com/nicholaswilde/docker-cryptpad/workflows/hadolint/badge.svg?branch=main)](https://github.com/nicholaswilde/docker-cryptpad/actions?query=workflow%3Ahadolint)
-[![yamllint](https://github.com/nicholaswilde/docker-cryptpad/workflows/yamllint/badge.svg?branch=main)](https://github.com/nicholaswilde/docker-cryptpad/actions?query=workflow%3Ayamllint)
+[![lint](https://github.com/nicholaswilde/docker-cryptpad/workflows/lint/badge.svg?branch=main)](https://github.com/nicholaswilde/docker-cryptpad/actions?query=workflow%3Alint)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
 
 A Docker image for [Cryptpad](https://github.com/xwiki-labs/cryptpad).
