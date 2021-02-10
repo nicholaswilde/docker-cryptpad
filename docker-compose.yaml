@@ -2,11 +2,15 @@
 version: "2.1"
 services:
   installer:
-    image: nicholaswilde/cryptpad:latest
+    image: nicholaswilde/cryptpad
     container_name: cryptpad
     ports:
       - 3000:3000
     restart: unless-stopped
+    environment:
+      - TZ=America/Los_Angeles  # optional
+      - PUID=1000               # optional
+      - PGID=1000               # optional
     volumes:
       - blob:/blob
       - block:/block
