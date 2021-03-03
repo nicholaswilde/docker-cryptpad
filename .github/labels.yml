@@ -1,4 +1,9 @@
+---
 ## more info https://github.com/crazy-max/ghaction-github-labeler
+- # bug
+  name: ":bug: bug"
+  color: "b60205"
+  description: ""
 - # documentation
   name: ":memo: documentation"
   color: "c5def5"
