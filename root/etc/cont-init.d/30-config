@@ -1,0 +1,10 @@
+#!/usr/bin/with-contenv bash
+
+# permissions
+chown -R abc:abc \
+  /blob \
+  /block \
+  /customize \
+  /data \
+  /datastore \
+  /config

@@ -1,0 +1,109 @@
+---
+version: '3'
+
+vars:
+  URL_SNYK: "https://github.com/snyk/snyk/releases/download/v1.458.0/snyk-linux"
+  URL_HADOLINT: "https://github.com/hadolint/hadolint/releases/download/v1.22.1/hadolint-Linux-x86_64"
+  URL_GOREPLACE: 'https://github.com/webdevops/go-replace/releases/download/1.1.2/gr-{{ ARCH | replace "amd" "" }}-linux'
+  GIT_ROOT:
+    sh: "git rev-parse --show-toplevel"
+
+tasks:
+  install:
+    desc: Install all developer dependencies
+    deps:
+      - _distrib-reqs
+      - pre-commit
+      - snyk
+      - yamllint
+      - hadolint
+      - go-replace
+    silent: true
+
+  yamllint:
+    desc: Install a precommit pip package
+    cmds:
+      - echo "Installing yamllint"
+      - python3 -m pip install --user yamllint
+    status:
+      - type yamllint
+    deps:
+      - _distrib-reqs
+    silent: true
+
+  pre-commit:
+    desc: Install a pre-commit pip package
+    cmds:
+      - echo "Installing pre-commit"
+      - python3 -m pip install --user pre-commit
+    status:
+      - type pre-commit
+    deps:
+      - _distrib-reqs
+    silent: true
+
+  snyk:
+    desc: Install snyk
+    cmds:
+      - echo "Installing snyk"
+      - mkdir -p ".bin"
+      - "wget -q {{ .URL_SNYK }} -O .bin/snyk"
+      - "chmod +x .bin/snyk"
+      - task: _path-notify
+    status:
+      - test -e .bin/snyk
+    deps:
+      - _distrib-reqs
+    silent: true
+
+  hadolint:
+    desc: Install hadolint
+    cmds:
+      - echo "Installing hadolint"
+      - mkdir -p ".bin"
+      - "wget -q {{ .URL_HADOLINT }} -O .bin/hadolint"
+      - "chmod +x .bin/hadolint"
+      - task: _path-notify
+    status:
+      - test -e .bin/hadolint
+    deps:
+      - _distrib-reqs
+    silent: true
+
+  go-replace:
+    desc: Install go-replace
+    cmds:
+      - echo "Installing go-replace"
+      - mkdir -p ".bin"
+      - echo "{{ .URL_GOREPLACE }}"
+      - wget -q {{ .URL_GOREPLACE }} -O .bin/go-replace
+      - chmod +x .bin/go-replace
+      - task: _path-notify
+    status:
+      - test -e .bin/go-replace
+    deps:
+      - _distrib-reqs
+    silent: true
+
+  _path-notify:
+    cmds:
+      - echo "Be sure to update your PATH, PATH=\$PATH:\$PWD/.bin"
+    silent: true
+
+  _distrib-reqs:
+    cmds:
+      - task deps:_need BIN=wget
+      - task deps:_need BIN=python3
+      - task deps:_need BIN=docker
+    silent: true
+
+  _secrets-reqs:
+    cmds:
+      - task deps:_need BIN=pass
+      - task deps:_need BIN=gh
+    silent: true
+
+  _need:
+    cmds:
+      - type {{ .BIN }} 2>&1 >/dev/null || (echo "Please install {{ .BIN }}"; exit 1)
+    silent: true

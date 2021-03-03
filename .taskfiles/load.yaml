@@ -1,0 +1,8 @@
+---
+version: '3'
+
+tasks:
+  latest:
+    desc: Load the release image
+    cmds:
+      - "{{ .BUILD }} {{ .TAG_LATEST }} -f Dockerfile . --load"

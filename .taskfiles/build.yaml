@@ -1,0 +1,23 @@
+---
+version: '3'
+
+tasks:
+  all:
+    desc: Build all platforms
+    cmds:
+      - "{{ .BUILD }} {{ .TAG_VERSION }} {{ .PLATFORMS }} -f Dockerfile ."
+    deps:
+      - build-deps
+
+  latest:
+    desc: Build the latest Docker image
+    cmds:
+      - "{{ .BUILD }} {{ .TAG_LATEST }} -f Dockerfile ."
+    deps:
+      - build-deps
+
+  build-deps:
+    preconditions:
+      - sh: "docker buildx version"
+        msg: "buildx is not installed"
+    silent: true

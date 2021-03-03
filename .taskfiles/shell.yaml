@@ -1,0 +1,9 @@
+---
+version: '3'
+
+tasks:
+  exec:
+    desc: Get a shell of a running container
+    cmds:
+      - "{{ .EXEC }} /bin/sh"
+

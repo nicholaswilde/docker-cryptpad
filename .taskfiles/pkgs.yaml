@@ -1,0 +1,18 @@
+---
+version: '3'
+
+tasks:
+  alpine:
+    desc: Check package versions for alpine based images
+    cmds:
+      - "{{ .RUN }} {{ .BASE }} /bin/sh -c 'apk update && apk policy {{ .PACKAGES }}'"
+
+  debian:
+    desc: Check package versions for debian based images
+    cmds:
+      - "{{ .RUN }} {{ .BASE }} /bin/sh -c 'apt-get update && apt-cache policy {{ .PACKAGES }}'"
+
+  pip:
+    desc: Show the installed pip package versions
+    cmds:
+      - "{{ .RUN }} {{ .BASE }} /bin/sh -c 'pip install {{ .PIP }} && pip show {{ .PIP }}'"

@@ -1,0 +1,184 @@
+---
+version: '3'
+
+dotenv: ['task.env']
+
+vars:
+  BUILD_DATE:
+    sh: "date -u +%Y-%m-%dT%H%M%S%Z"
+  BUILD_ARGS: >-
+    --build-arg VERSION={{ .VERSION }}
+    --build-arg CHECKSUM={{ .CHECKSUM }}
+    --build-arg BUILD_DATE={{ .BUILD_DATE }}
+  TAG_VERSION: "{{ .NS }}/{{ .IMAGE_NAME }}:{{ .VERSION }}-ls{{ .LS }}"
+  TAG_LATEST: "{{ .NS }}/{{ .IMAGE_NAME }}:latest"
+  CONTAINER: "{{ .CONTAINER_NAME }}-{{ .CONTAINER_INSTANCE }}"
+  RUN: "docker run -it --rm --name {{ .CONTAINER_NAME }}-{{ .CONTAINER_INSTANCE }} {{ .ENV }} {{ .PORTS }}"
+  EXEC: "docker exec -it {{ .CONTAINER }}"
+  BUILD: "docker buildx build {{ .BUILD_ARGS }} -t"
+
+includes:
+  build: ./.taskfiles/build.yaml
+  builder: ./.taskfiles/builder.yaml
+  chk: ./.taskfiles/chk.yaml
+  date: ./.taskfiles/date.yaml
+  deps: ./.taskfiles/deps.yaml
+  image: ./.taskfiles/image.yaml
+  load: ./.taskfiles/load.yaml
+  pkgs: ./.taskfiles/pkgs.yaml
+  run: ./.taskfiles/run.yaml
+  shell: ./.taskfiles/shell.yaml
+  snyk: ./.taskfiles/snyk.yaml
+
+tasks:
+  build:
+    desc: Build the native Docker image
+    cmds:
+      - "{{ .BUILD }} {{ .TAG_VERSION }} -f Dockerfile ."
+    deps:
+      - build:build-deps
+
+  checksum:
+    desc: Get the checksum of the release or source package.
+    deps:
+      - chk:_varcheck
+      - chk:_release
+      - chk:_source
+
+  date:
+    desc: Get the date of the image
+    cmds:
+      - "{{ .RUN }} --entrypoint date {{ .TAG_VERSION }}"
+
+  lint:
+    desc: Lint the repoistory
+    cmds:
+      - "hadolint Dockerfile"
+      - "yamllint ."
+    preconditions:
+      - sh: type hadolint
+        msg: "hadolint is not installed. Run 'task deps:hadolint'"
+      - sh: type yamllint
+        msg: "yamllint is not installed. Run 'task deps:yamllint'"
+    silent: true
+
+  load:
+    desc: Load the release image
+    cmds:
+      - "{{ .BUILD }} {{ .TAG_VERSION }} -f Dockerfile . --load"
+
+  pre-commit:
+    desc: Install pre-commit hooks
+    cmds:
+      - "pre-commit install"
+      - "pre-commit install-hooks"
+    preconditions:
+      - sh: type pre-commit
+        msg: "pre-commit is not installed. Run 'task deps:pre-commit'"
+    silent: true
+
+  prune:
+    desc: Prune the builder
+    cmds:
+      - "docker builder prune --all -f"
+
+  push:
+    desc: Push the image to all repositories
+    cmds:
+      - "{{ .BUILD }} {{ .TAG_LATEST }} {{ .PLATFORMS }} -f Dockerfile . --push"
+      - "{{ .BUILD }} {{ .TAG_VERSION }} {{ .PLATFORMS }} -f Dockerfile . --push"
+      - "{{ .BUILD }} {{ .QUAY_LATEST }} {{ .PLATFORMS }} -f Dockerfile . --push"
+      - "{{ .BUILD }} {{ .QUAY_VERSION }} {{ .PLATFORMS }} -f Dockerfile . --push"
+      - "{{ .BUILD }} {{ .GHCR_LATEST }} {{ .PLATFORMS }} -f Dockerfile . --push"
+      - "{{ .BUILD }} {{ .GHCR_VERSION }} {{ .PLATFORMS }} -f Dockerfile . --push"
+    vars:
+      QUAY_VERSION: "quay.io/{{ .TAG_VERSION }}"
+      QUAY_LATEST: "quay.io/{{ .TAG_LATEST }}"
+      GHCR_VERSION: "ghcr.io/{{ .TAG_VERSION }}"
+      GHCR_LATEST: "ghcr.io/{{ .TAG_LATEST }}"
+
+  readme:
+    desc: Update the README.md by replacing template with the image name.
+    cmds:
+      - "sed -i 's/template/{{ .IMAGE_NAME }}/g' README.md"
+
+  rm:
+    desc: Remove the image
+    cmds:
+      - "docker rmi -f {{ .TAG_VERSION }}"
+
+  run:
+    desc: Run the image in the foreground
+    cmds:
+      - "{{ .RUN }} {{ .TAG_VERSION }}"
+    preconditions:
+      - docker images -q {{ .TAG_VERSION }} 2> /dev/null
+
+  rund:
+    desc: Run the image in the background
+    cmds:
+      - "{{ .RUN }} -d {{ .TAG_VERSION }}"
+
+  secrets:
+    desc: Upload secrets to repo from pass
+    cmds:
+      - "pass github/login-action | gh secret set CR_PAT"
+      - "pass docker/username | gh secret set DOCKERHUB_USERNAME"
+      - "pass docker/token | gh secret set DOCKERHUB_TOKEN"
+      - "pass quay.io/robot | gh secret set QUAY_USERNAME"
+      - "pass quay.io/token | gh secret set QUAY_TOKEN"
+    deps:
+      - deps:_secrets-reqs
+    silent: true
+
+  shell:
+    desc: Run a shell of an image
+    cmds:
+      - "{{ .RUN }} --entrypoint /bin/sh -u {{ .U }} {{ .TAG_VERSION }}"
+    vars:
+      U: '{{ default "0" .U }}'
+
+  stop:
+    desc: Stop a running container
+    cmds:
+      - "docker stop {{ .CONTAINER }}"
+
+  up:
+    desc: Run docker-compose up
+    cmds:
+      - docker-compose -f docker-compose.yaml up
+    deps:
+      - build:latest
+
+  vars:
+    desc: Print all the variables
+    cmds:
+      - "printf 'task: Available variables for this project:\n'"
+      - 'printf "{{ .COLOR }}* BASE\e[m               %s\n" "{{ .BASE }}"'
+      - 'printf "{{ .COLOR }}* CHECKSUM\e[m           %s\n" "{{ .CHECKSUM }}"'
+      - 'printf "{{ .COLOR }}* CONTAINER\e[m          %s\n" "{{ .CONTAINER }}"'
+      - 'printf "{{ .COLOR }}* CONTAINER_INSTANCE\e[m %s\n" "{{ .CONTAINER_INSTANCE }}"'
+      - 'printf "{{ .COLOR }}* CONTAINER_NAME\e[m     %s\n" "{{ .CONTAINER_NAME }}"'
+      - 'printf "{{ .COLOR }}* ENV\e[m                %s\n" "{{ .ENV }}"'
+      - 'printf "{{ .COLOR }}* FILENAME\e[m           %s\n" "{{ .FILENAME }}"'
+      - 'printf "{{ .COLOR }}* GIT_ROOT\e[m           %s\n" "{{ .GIT_ROOT }}"'
+      - 'printf "{{ .COLOR }}* IMAGE_NAME\e[m         %s\n" "{{ .IMAGE_NAME }}"'
+      - 'printf "{{ .COLOR }}* LS\e[m                 %s\n" "{{ .LS }}"'
+      - 'printf "{{ .COLOR }}* NS\e[m                 %s\n" "{{ .NS }}"'
+      - 'printf "{{ .COLOR }}* PACKAGES\e[m           %s\n" "{{ .PACKAGES }}"'
+      - 'printf "{{ .COLOR }}* PIP\e[m                %s\n" "{{ .PIP }}"'
+      - 'printf "{{ .COLOR }}* PLATFORMS\e[m          %s\n" "{{ .PLATFORMS }}"'
+      - 'printf "{{ .COLOR }}* PORTS\e[m              %s\n" "{{ .PORTS }}"'
+      - 'printf "{{ .COLOR }}* SOURCE_ORG\e[m         %s\n" "{{ .SOURCE_ORG }}"'
+      - 'printf "{{ .COLOR }}* SOURCE_REPO\e[m        %s\n" "{{ .SOURCE_REPO }}"'
+      - 'printf "{{ .COLOR }}* TYPE\e[m               %s\n" "{{ .TYPE }}"'
+      - 'printf "{{ .COLOR }}* VERSION\e[m            %s\n" "{{ .VERSION }}"'
+    vars:
+      # Blue
+      COLOR: '\e[1;34m'
+    silent: true
+
+  default:
+    cmds:
+      - task -l
+    silent: true

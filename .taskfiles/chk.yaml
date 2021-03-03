@@ -1,0 +1,32 @@
+---
+version: '3'
+
+tasks:
+  _release:
+    cmds:
+      - task: _dl
+        vars:
+          URL: "https://github.com/{{ .SOURCE_ORG }}/{{ .SOURCE_REPO }}/releases/download/{{ .VERSION }}/{{ .FILENAME }}"
+    status:
+      - test {{ .TYPE }} != "release"
+
+  _source:
+    cmds:
+      - task: _dl
+        vars:
+          URL: "https://github.com/{{ .SOURCE_ORG }}/{{ .SOURCE_REPO }}/archive/{{ .VERSION }}.tar.gz"
+    status:
+      - test {{ .TYPE }} != "source"
+      - test {{ .TYPE }} != "commit"
+
+  _varcheck:
+    cmds:
+      - cmd: >
+          (test {{ .TYPE }} = "source" ||
+          test {{ .TYPE }} = "release" ||
+          test {{ .TYPE }} = "commit") ||
+          (echo "TYPE is not 'source','commit', or 'release'"; exit 1)
+    silent: true
+
+  _dl:
+    cmds: ["wget {{ .URL }} -O- | sha256sum"]

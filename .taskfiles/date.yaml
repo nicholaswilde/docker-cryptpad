@@ -1,0 +1,8 @@
+---
+version: '3'
+
+tasks:
+  exec:
+    desc: Get the date of the container
+    cmds:
+      - "{{ .EXEC }} date"

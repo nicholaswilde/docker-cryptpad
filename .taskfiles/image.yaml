@@ -1,0 +1,16 @@
+---
+version: '3'
+
+tasks:
+  create:
+    desc: "Create a new Docker image"
+    cmds:
+      - ./.bin/go-replace -s '${CHARTNAME}' -r "{{ .IMAGE }}" --path={{.GIT_ROOT}}/charts/{{.CHART}} --path-pattern='*.*'
+    deps:
+      - check-image
+    silent: true
+
+  _check-image:
+    cmds:
+      - test ! -z "{{ .IMAGE }}" || (echo "Please define IMAGE parameter"; exit 1)
+    silent: true

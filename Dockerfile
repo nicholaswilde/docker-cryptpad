@@ -1,6 +1,6 @@
 FROM alpine:3.13.1 as base
-ARG VERSION=4.1.0
-ARG CHECKSUM=1b5ad7536532e504108bbdceb9c53c8ae116a7cd74185d9cbad0ee7929d423e2
+ARG VERSION
+ARG CHECKSUM=6ff68e65d7222890ab5f0ca144d916ba8f9db90363efa3aed6abeac8624715ce
 WORKDIR /tmp
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 RUN \
@@ -8,13 +8,15 @@ RUN \
   apk add --no-cache \
     wget=1.21.1-r1 \
     git=2.30.1-r0 \
-    npm=14.15.4-r0 && \
+    npm=14.16.0-r0 && \
+  echo "**** download cryptpad ****" && \
   wget -q -O "${VERSION}.tar.gz" "https://github.com/xwiki-labs/cryptpad/archive/${VERSION}.tar.gz" && \
   echo "${CHECKSUM}  ${VERSION}.tar.gz" | sha256sum -c && \
   mkdir /app && \
   tar -xvf ${VERSION}.tar.gz --strip-components=1 -C /app
 WORKDIR /app
 RUN \
+  echo "**** build cryptpad ****" && \
   npm install -g bower && \
   mkdir blob block customize data datastore && \
   sed -i "s@//httpAddress: '::'@httpAddress: '0.0.0.0'@" /app/config/config.example.js && \
@@ -23,16 +25,17 @@ RUN \
 
 FROM ghcr.io/linuxserver/baseimage-alpine:3.13
 ARG BUILD_DATE
-ARG VERSION=4.1.0
+ARG VERSION
 LABEL build_version="Version:- ${VERSION} Build-date:- ${BUILD_DATE}"
 LABEL maintainer="nicholaswilde"
 RUN \
   echo "**** install packages ****" && \
     apk add --no-cache \
-      nodejs=14.15.4-r0 && \
+      nodejs=14.16.0-r0 && \
   echo "**** cleanup ****" && \
     rm -rf /tmp/* /var/cache/apk/*
 COPY --from=base --chown=abc:abc /app /
+COPY root/ .
 WORKDIR /
 VOLUME \
   /blob \
@@ -41,5 +44,6 @@ VOLUME \
   /data \
   /datastore \
   /config
-EXPOSE 3000 3001
-CMD ["node", "server.js"]
+EXPOSE \
+  3000 \
+  3001
