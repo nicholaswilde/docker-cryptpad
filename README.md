@@ -5,7 +5,13 @@
 [![lint](https://github.com/nicholaswilde/docker-cryptpad/workflows/lint/badge.svg?branch=main)](https://github.com/nicholaswilde/docker-cryptpad/actions?query=workflow%3Alint)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
 
-A Docker image for [Cryptpad](https://github.com/xwiki-labs/cryptpad).
+A multi-architecture Docker image for [Cryptpad](https://github.com/xwiki-labs/cryptpad).
+
+## Architectures
+
+* [x] `armv7`
+* [x] `arm64`
+* [x] `amd64`
 
 ## Dependencies
 
@@ -27,6 +33,14 @@ $ docker run -d \
 ### docker-compose
 
 See [docker-compose.yaml](./docker-compose.yaml).
+
+## Configuration
+
+|user | uid |
+|----:|:---:|
+| abc | 911 |
+
+See [this link](https://github.com/xwiki-labs/cryptpad-docker#environment-variables) for additional configuration parameters.
 
 ## Development
 
