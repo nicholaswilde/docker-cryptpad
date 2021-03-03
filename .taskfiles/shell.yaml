@@ -6,4 +6,3 @@ tasks:
     desc: Get a shell of a running container
     cmds:
       - "{{ .EXEC }} /bin/sh"
-
