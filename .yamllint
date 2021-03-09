@@ -4,6 +4,7 @@ extends: default
 ignore: |
   **/.github/workflows/**
   **/stale.yml
+  **/labels.yml
 
 rules:
   line-length:

@@ -1,6 +1,6 @@
 FROM alpine:3.13.1 as base
 ARG VERSION
-ARG CHECKSUM=6ff68e65d7222890ab5f0ca144d916ba8f9db90363efa3aed6abeac8624715ce
+ARG CHECKSUM=a54a254f696f7aaa6e2492d6561bccd62919217c7ece3cff97179b9746802128
 WORKDIR /tmp
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 RUN \
@@ -21,11 +21,13 @@ RUN \
   mkdir blob block customize data datastore && \
   sed -i "s@//httpAddress: '::'@httpAddress: '0.0.0.0'@" /app/config/config.example.js && \
   npm i --production && \
-  bower install --allow-root
+  bower install --allow-root && \
+  npm install cryptpad-sql-store
 
 FROM ghcr.io/linuxserver/baseimage-alpine:3.13
 ARG BUILD_DATE
 ARG VERSION
+WORKDIR /
 LABEL build_version="Version:- ${VERSION} Build-date:- ${BUILD_DATE}"
 LABEL maintainer="nicholaswilde"
 RUN \

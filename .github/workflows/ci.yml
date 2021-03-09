@@ -19,12 +19,12 @@ on:
         # Friendly description to be shown in the UI instead of 'name'
         description: 'Version'
         # Default value if no value is explicitly provided
-        default: '4.1.0'
+        default: '4.2.1'
         # Input has to be provided for the workflow to run
         required: true
       ls:
         description: 'ls'
-        default: 'ls6'
+        default: 'ls8'
         required: true
 
 jobs:
