@@ -1,14 +1,14 @@
-FROM alpine:3.13.1 as base
+FROM alpine:3.13.5 as base
 ARG VERSION
-ARG CHECKSUM=a54a254f696f7aaa6e2492d6561bccd62919217c7ece3cff97179b9746802128
+ARG CHECKSUM=9ce0feccee6975eb853f109607a88d60fb97c315017aa2c568416e6b313a79bd
 WORKDIR /tmp
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 RUN \
   echo "**** install packages ****" && \
   apk add --no-cache \
     wget=1.21.1-r1 \
-    git=2.30.1-r0 \
-    npm=14.16.0-r0 && \
+    git=2.30.2-r0 \
+    npm=14.16.1-r1 && \
   echo "**** download cryptpad ****" && \
   wget -q -O "${VERSION}.tar.gz" "https://github.com/xwiki-labs/cryptpad/archive/${VERSION}.tar.gz" && \
   echo "${CHECKSUM}  ${VERSION}.tar.gz" | sha256sum -c && \
@@ -28,12 +28,13 @@ FROM ghcr.io/linuxserver/baseimage-alpine:3.13
 ARG BUILD_DATE
 ARG VERSION
 WORKDIR /
+# hadolint ignore=DL3048
 LABEL build_version="Version:- ${VERSION} Build-date:- ${BUILD_DATE}"
 LABEL maintainer="nicholaswilde"
 RUN \
   echo "**** install packages ****" && \
     apk add --no-cache \
-      nodejs=14.16.0-r0 && \
+      nodejs=14.16.1-r1 && \
   echo "**** cleanup ****" && \
     rm -rf /tmp/* /var/cache/apk/*
 COPY --from=base --chown=abc:abc /app /
