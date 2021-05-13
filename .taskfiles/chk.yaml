@@ -2,6 +2,48 @@
 version: '3'
 
 tasks:
+  print:
+    desc: Get the checksum of the release or source package.
+    deps:
+      - _varcheck
+      - _release
+      - _source
+
+  export:
+    silent: true
+    desc: Export the checksum of the release or source package to CHECKSUM
+    deps:
+      - _varcheck
+      - _release-export
+      - _source-export
+
+  _release-export:
+    silent: true
+    cmds:
+      - task: _dl-export
+        vars:
+          URL: "https://github.com/{{ .SOURCE_ORG }}/{{ .SOURCE_REPO }}/releases/download/{{ .VERSION }}/{{ .FILENAME }}"
+    status:
+      - test {{ .TYPE }} != "release"
+
+  _source-export:
+    silent: true
+    cmds:
+      - task: _dl-export
+        vars:
+          URL: "https://github.com/{{ .SOURCE_ORG }}/{{ .SOURCE_REPO }}/archive/{{ .VERSION }}.tar.gz"
+    status:
+      - test {{ .TYPE }} != "source"
+      - test {{ .TYPE }} != "commit"
+
+  _dl-export:
+    slient: true
+    cmds:
+      - |
+        SUM=$(wget -q {{ .URL }} -O- | sha256sum|awk '{print $1}')
+        printf "%s" "$SUM" > CHECKSUM
+        cat CHECKSUM
+
   _release:
     cmds:
       - task: _dl
