@@ -4,6 +4,12 @@ version: '3'
 dotenv: ['task.env']
 
 vars:
+  VERSION:
+    sh: cat VERSION
+  CHECKSUM:
+    sh: cat CHECKSUM
+  LS:
+    sh: cat LS
   BUILD_DATE:
     sh: "date -u +%Y-%m-%dT%H%M%S%Z"
   BUILD_ARGS: >-
@@ -14,8 +20,11 @@ vars:
   TAG_LATEST: "{{ .NS }}/{{ .IMAGE_NAME }}:latest"
   CONTAINER: "{{ .CONTAINER_NAME }}-{{ .CONTAINER_INSTANCE }}"
   RUN: "docker run -it --rm --name {{ .CONTAINER_NAME }}-{{ .CONTAINER_INSTANCE }} {{ .ENV }} {{ .PORTS }}"
+  DGOSS_RUN: "dgoss run -it --rm --name {{ .CONTAINER_NAME }}-{{ .CONTAINER_INSTANCE }} {{ .ENV }} {{ .PORTS }}"
+  DGOSS_EDIT: "dgoss edit -it --rm --name {{ .CONTAINER_NAME }}-{{ .CONTAINER_INSTANCE }} {{ .ENV }} {{ .PORTS }}"
   EXEC: "docker exec -it {{ .CONTAINER }}"
   BUILD: "docker buildx build {{ .BUILD_ARGS }} -t"
+  API_URL: "https://api.github.com/repos/{{ .SOURCE_ORG }}/{{ .SOURCE_REPO }}/releases/latest"
 
 includes:
   build: ./.taskfiles/build.yaml
@@ -23,12 +32,15 @@ includes:
   chk: ./.taskfiles/chk.yaml
   date: ./.taskfiles/date.yaml
   deps: ./.taskfiles/deps.yaml
+  goss: ./.taskfiles/goss.yaml
   image: ./.taskfiles/image.yaml
   load: ./.taskfiles/load.yaml
+  ls: ./.taskfiles/ls.yaml
   pkgs: ./.taskfiles/pkgs.yaml
   run: ./.taskfiles/run.yaml
   shell: ./.taskfiles/shell.yaml
   snyk: ./.taskfiles/snyk.yaml
+  version: ./.taskfiles/version.yaml
 
 tasks:
   build:
@@ -37,13 +49,6 @@ tasks:
       - "{{ .BUILD }} {{ .TAG_VERSION }} -f Dockerfile ."
     deps:
       - build:build-deps
-
-  checksum:
-    desc: Get the checksum of the release or source package.
-    deps:
-      - chk:_varcheck
-      - chk:_release
-      - chk:_source
 
   date:
     desc: Get the date of the image
@@ -148,7 +153,7 @@ tasks:
     cmds:
       - docker-compose -f docker-compose.yaml up
     deps:
-      - build:latest
+      - load:latest
 
   vars:
     desc: Print all the variables

@@ -1,0 +1,18 @@
+---
+version: '3'
+
+tasks:
+  print:
+    desc: Print the LS value
+    silent: true
+    cmds:
+      - printf "%s" "{{ .LS }}"
+
+  increment:
+    desc: Increment the LS value
+    silent: true
+    cmds:
+      - |
+        LS=$(( {{ .LS }} + 1 ))
+        printf "%s" "$LS" > LS
+        cat LS
