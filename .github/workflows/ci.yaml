@@ -171,4 +171,3 @@ jobs:
           release_name: ${{ env.tag }}
           draft: false
           prerelease: false
-
