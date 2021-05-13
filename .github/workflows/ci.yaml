@@ -121,14 +121,14 @@ jobs:
 
       - name: Login to DockerHub
         uses: docker/login-action@v1.9.0
-        if: github.event_name != 'pull_request' && ${{ steps.checkTag.outputs.exists == 'true' }}
+        if: github.event_name != 'pull_request'
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
           
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v1.9.0
-        if: github.event_name != 'pull_request' && ${{ steps.checkTag.outputs.exists == 'true' }}
+        if: github.event_name != 'pull_request'
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
@@ -136,7 +136,7 @@ jobs:
 
       - name: Login to Quay Registry
         uses: docker/login-action@v1.9.0
-        if: github.event_name != 'pull_request' && ${{ steps.checkTag.outputs.exists == 'true' }}
+        if: github.event_name != 'pull_request'
         with:
           registry: quay.io
           username: ${{ secrets.QUAY_USERNAME }}
@@ -148,7 +148,7 @@ jobs:
           context: .
           file: ./Dockerfile
           platforms: linux/amd64,linux/arm/v7,linux/arm64
-          push: true
+          push: ${{ steps.prep.outputs.push }}
           build-args: |
             BUILD_DATE=${{ env.date }}
             VERSION=${{ steps.prep.outputs.version }}
@@ -164,6 +164,7 @@ jobs:
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1.1.4
+        if: github.event_name != 'pull_request'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
         with:
