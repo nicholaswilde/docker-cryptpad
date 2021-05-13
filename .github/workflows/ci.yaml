@@ -148,7 +148,7 @@ jobs:
           context: .
           file: ./Dockerfile
           platforms: linux/amd64,linux/arm/v7,linux/arm64
-          push: true
+          push: ${{ steps.prep.outputs.push }}
           build-args: |
             BUILD_DATE=${{ env.date }}
             VERSION=${{ steps.prep.outputs.version }}
