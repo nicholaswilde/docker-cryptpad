@@ -7,7 +7,7 @@ port:
   tcp:3000:
     listening: true
     ip:
-    - 0.0.0.0
+      - 0.0.0.0
 
 http:
   http://localhost:3000:
