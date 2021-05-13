@@ -1,0 +1,20 @@
+---
+version: '3'
+
+tasks:
+  print:
+    desc: Print the latest app version
+    silent: true
+    cmds:
+      - printf %s {{ .VERSION }}
+    vars:
+      VERSION:
+        sh: curl -sX GET {{ .API_URL }} | jq --raw-output '.tag_name'
+
+  export:
+    desc: Export the latest app version to VERSION
+    cmds:
+      - printf "%s" "{{ .VERSION }}" > VERSION
+    vars:
+      VERSION:
+        sh: curl -sX GET {{ .API_URL }} | jq --raw-output '.tag_name'

@@ -1,6 +1,6 @@
 FROM alpine:3.13.5 as base
 ARG VERSION
-ARG CHECKSUM=f61aa69f25cd4551eb2990488bac9ec1699b7d1823cef6e47c5a9110128527bc
+ARG CHECKSUM
 WORKDIR /tmp
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 RUN \
