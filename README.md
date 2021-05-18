@@ -44,11 +44,11 @@ See [this link](https://github.com/xwiki-labs/cryptpad-docker#environment-variab
 
 ## Development
 
-See [Wiki](https://github.com/nicholaswilde/docker-template/wiki/Development).
+See [docs](https://nicholaswilde.io/docker-docs/development).
 
 ## Troubleshooting
 
-See [Wiki](https://github.com/nicholaswilde/docker-template/wiki/Troubleshooting).
+See [docs](https://nicholaswilde.io/docker-docs/troubleshooting).
 
 ## Pre-commit hook
 
