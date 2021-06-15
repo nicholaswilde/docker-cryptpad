@@ -1,4 +1,4 @@
-FROM alpine:3.13.5 as base
+FROM alpine:3.14.0 as base
 ARG VERSION
 ARG CHECKSUM
 WORKDIR /tmp
