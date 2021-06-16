@@ -1,4 +1,4 @@
-FROM alpine:3.13.5 as base
+FROM ghcr.io/linuxserver/baseimage-alpine:3.13 as base
 ARG VERSION
 ARG CHECKSUM
 WORKDIR /tmp
@@ -12,7 +12,7 @@ RUN \
   echo "**** download cryptpad ****" && \
   wget -q -O "${VERSION}.tar.gz" "https://github.com/xwiki-labs/cryptpad/archive/${VERSION}.tar.gz" && \
   echo "${CHECKSUM}  ${VERSION}.tar.gz" | sha256sum -c && \
-  mkdir /app && \
+  # mkdir /app && \
   tar -xvf ${VERSION}.tar.gz --strip-components=1 -C /app
 WORKDIR /app
 RUN \
