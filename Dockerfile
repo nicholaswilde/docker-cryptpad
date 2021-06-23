@@ -1,4 +1,4 @@
-FROM ghcr.io/linuxserver/baseimage-alpine:3.13 as base
+FROM ghcr.io/linuxserver/baseimage-alpine:3.14 as base
 ARG VERSION
 ARG CHECKSUM
 WORKDIR /tmp
@@ -24,7 +24,7 @@ RUN \
   bower install --allow-root && \
   npm install cryptpad-sql-store
 
-FROM ghcr.io/linuxserver/baseimage-alpine:3.13
+FROM ghcr.io/linuxserver/baseimage-alpine:3.14
 ARG BUILD_DATE
 ARG VERSION
 WORKDIR /
