@@ -28,7 +28,7 @@ on:
 env:
   # How long to sleep before running the tests (gives the application time to start)
   GOSS_SLEEP: 30
-  
+
 jobs:
   prep:
     runs-on: ubuntu-latest
@@ -41,14 +41,14 @@ jobs:
       tag: ${{ steps.prep.outputs.version }}-ls${{ steps.prep.outputs.ls }}
       repo_name: ${{ steps.prep.outputs.repo_name }}
       date: ${{ steps.prep.outputs.date }}
-      
+
     steps:
       - name: Checkout
         uses: actions/checkout@v2.3.4
-        
+
        # Define if tests and push should be run against which versions/platforms
       - name: Prepare
-        id: prep          
+        id: prep
         run: |
           VERSION=$(cat ./VERSION)
           echo ::set-output name=version::${VERSION}
@@ -74,7 +74,7 @@ jobs:
           else
             echo ::set-output name=push::true
           fi
-          
+
   tag-does-not-exist:
     runs-on: ubuntu-latest
     needs: prep
@@ -84,7 +84,7 @@ jobs:
       - name: Check if tag already exists
         uses: mukunku/tag-exists-action@v1.0.0
         id: checkTag
-        with: 
+        with:
           tag: ${{ needs.prep.outputs.tag }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -96,20 +96,20 @@ jobs:
             echo "${{needs.prep.outputs.tag}} already exists"
             exit 1
           fi
-         
+
   build:
     runs-on: ubuntu-latest
     if: always() # Run regardless if tag-does-not-exist fails
-    needs: 
+    needs:
       - prep
       - tag-does-not-exist
-    steps:        
+    steps:
       - name: Checkout
         uses: actions/checkout@v2.3.4
-  
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1.2.0
-      
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1.3.0
         with:
@@ -122,14 +122,14 @@ jobs:
           key: ${{ runner.os }}-buildx-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-buildx-
-            
+
       # Install the GOSS testing framework
       - name: Set up goss/dgoss
         uses: e1himself/goss-installation-action@v1.0.3
         if: needs.prep.outputs.goss == 'true'
         with:
           version: 'v0.3.16'
-          
+
        # Creates a local build to run tests on
       - name: Build and Load local test-container
         uses: docker/build-push-action@v2
@@ -153,14 +153,14 @@ jobs:
           GOSS_FILE: ./goss.yaml
         run: |
           dgoss run ghcr.io/${{ github.repository_owner }}/${{needs.prep.outputs.repo_name}}:test
-      
+
       - name: Login to DockerHub
         uses: docker/login-action@v1.10.0
         if: github.event_name != 'pull_request' && needs.tag-does-not-exist.outputs.exists == 'false'
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-          
+
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v1.10.0
         if: github.event_name != 'pull_request'  && needs.tag-does-not-exist.outputs.exists == 'false'
@@ -191,13 +191,16 @@ jobs:
           tags: |
             ${{ github.repository_owner }}/${{needs.prep.outputs.repo_name}}:latest
             ${{ github.repository_owner }}/${{needs.prep.outputs.repo_name}}:${{needs.prep.outputs.tag}}
+            ${{ github.repository_owner }}/${{needs.prep.outputs.repo_name}}:version-${{needs.prep.outputs.version}}
             ghcr.io/${{ github.repository_owner }}/${{needs.prep.outputs.repo_name}}:latest
             ghcr.io/${{ github.repository_owner }}/${{needs.prep.outputs.repo_name}}:${{needs.prep.outputs.tag}}
+            ghcr.io/${{ github.repository_owner }}/${{needs.prep.outputs.repo_name}}:version-${{needs.prep.outputs.version}}
             quay.io/${{ github.repository_owner }}/${{needs.prep.outputs.repo_name}}:latest
             quay.io/${{ github.repository_owner }}/${{needs.prep.outputs.repo_name}}:${{needs.prep.outputs.tag}}
+            quay.io/${{ github.repository_owner }}/${{needs.prep.outputs.repo_name}}:version-${{needs.prep.outputs.version}}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,mode=max,dest=/tmp/.buildx-cache-new
-          
+
       # This ugly bit is necessary if you don't want your cache to grow forever
       # till it hits GitHub's limit of 5GB.
       # Temp fix
