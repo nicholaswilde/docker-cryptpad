@@ -1,4 +1,4 @@
-FROM ghcr.io/linuxserver/baseimage-alpine:3.13 as base
+FROM ghcr.io/linuxserver/baseimage-alpine:3.14 as base
 ARG VERSION
 ARG CHECKSUM
 WORKDIR /tmp
@@ -7,8 +7,8 @@ RUN \
   echo "**** install packages ****" && \
   apk add --no-cache \
     wget=1.21.1-r1 \
-    git=2.30.2-r0 \
-    npm=14.16.1-r1 && \
+    git=2.32.0-r0 \
+    npm=7.17.0-r0 && \
   echo "**** download cryptpad ****" && \
   wget -q -O "${VERSION}.tar.gz" "https://github.com/xwiki-labs/cryptpad/archive/${VERSION}.tar.gz" && \
   echo "${CHECKSUM}  ${VERSION}.tar.gz" | sha256sum -c && \
@@ -24,7 +24,7 @@ RUN \
   bower install --allow-root && \
   npm install cryptpad-sql-store
 
-FROM ghcr.io/linuxserver/baseimage-alpine:3.13
+FROM ghcr.io/linuxserver/baseimage-alpine:3.14
 ARG BUILD_DATE
 ARG VERSION
 WORKDIR /
@@ -34,7 +34,7 @@ LABEL maintainer="nicholaswilde"
 RUN \
   echo "**** install packages ****" && \
     apk add --no-cache \
-      nodejs=14.16.1-r1 && \
+      nodejs=14.17.1-r0 && \
   echo "**** cleanup ****" && \
     rm -rf /tmp/* /var/cache/apk/*
 COPY --from=base --chown=abc:abc /app /
