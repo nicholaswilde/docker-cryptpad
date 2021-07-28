@@ -34,7 +34,7 @@ LABEL maintainer="nicholaswilde"
 RUN \
   echo "**** install packages ****" && \
     apk add --no-cache \
-      nodejs=14.17.1-r0 && \
+      nodejs=14.17.3-r0 && \
   echo "**** cleanup ****" && \
     rm -rf /tmp/* /var/cache/apk/*
 COPY --from=base --chown=abc:abc /app /
