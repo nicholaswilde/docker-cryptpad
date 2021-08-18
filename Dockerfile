@@ -20,6 +20,7 @@ RUN \
   npm install -g bower && \
   mkdir blob block customize data datastore && \
   sed -i "s@//httpAddress: '::'@httpAddress: '0.0.0.0'@" /app/config/config.example.js && \
+  sed -i "s@installMethod: 'unspecified'@installMethod: 'nicholaswilde/docker-cryptpad'@" /app/config/config.example.js && \
   npm i --production && \
   bower install --allow-root && \
   npm install cryptpad-sql-store
@@ -34,7 +35,7 @@ LABEL maintainer="nicholaswilde"
 RUN \
   echo "**** install packages ****" && \
     apk add --no-cache \
-      nodejs=14.17.3-r0 && \
+      nodejs=14.17.4-r0 && \
   echo "**** cleanup ****" && \
     rm -rf /tmp/* /var/cache/apk/*
 COPY --from=base --chown=abc:abc /app /
