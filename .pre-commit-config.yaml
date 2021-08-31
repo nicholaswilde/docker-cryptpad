@@ -10,7 +10,7 @@ repos:
           - dockerfile
         entry: --platform linux/amd64 --entrypoint /bin/hadolint hadolint/hadolint:latest --config ./.hadolint.yaml -
   - repo: https://github.com/adrienverge/yamllint
-    rev: v1.26.2
+    rev: v1.26.3
     hooks:
       - id: yamllint
         name: Run yamllint
