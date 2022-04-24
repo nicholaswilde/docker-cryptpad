@@ -155,14 +155,14 @@ jobs:
           dgoss run ghcr.io/${{ github.repository_owner }}/${{needs.prep.outputs.repo_name}}:test
 
       - name: Login to DockerHub
-        uses: docker/login-action@v1.10.0
+        uses: docker/login-action@v1.14.1
         if: github.event_name != 'pull_request' && needs.tag-does-not-exist.outputs.exists == 'false'
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v1.10.0
+        uses: docker/login-action@v1.14.1
         if: github.event_name != 'pull_request'  && needs.tag-does-not-exist.outputs.exists == 'false'
         with:
           registry: ghcr.io
@@ -170,7 +170,7 @@ jobs:
           password: ${{ secrets.CR_PAT }}
 
       - name: Login to Quay Registry
-        uses: docker/login-action@v1.10.0
+        uses: docker/login-action@v1.14.1
         if: github.event_name != 'pull_request' && needs.tag-does-not-exist.outputs.exists == 'false'
         with:
           registry: quay.io
