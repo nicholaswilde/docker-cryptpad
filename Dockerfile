@@ -7,7 +7,7 @@ RUN \
   echo "**** install packages ****" && \
   apk add --no-cache \
     wget=1.21.2-r2 \
-    git=2.34.1-r0 \
+    git=2.34.2-r0 \
     npm=8.1.3-r0 && \
   echo "**** download cryptpad ****" && \
   wget -q -O "${VERSION}.tar.gz" "https://github.com/xwiki-labs/cryptpad/archive/${VERSION}.tar.gz" && \
@@ -35,7 +35,7 @@ LABEL maintainer="nicholaswilde"
 RUN \
   echo "**** install packages ****" && \
     apk add --no-cache \
-      nodejs=16.14.0-r0 && \
+      nodejs=16.14.2-r0 && \
   echo "**** cleanup ****" && \
     rm -rf /tmp/* /var/cache/apk/*
 COPY --from=base --chown=abc:abc /app /
